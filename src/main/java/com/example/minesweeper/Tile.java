@@ -4,6 +4,7 @@ import javafx.scene.control.Button;
 
 public class Tile extends Button {
     public boolean istMine;
+    public  boolean istMarkiert;
     public int nachbarn;
     public boolean revealed = false;
 
@@ -16,5 +17,19 @@ public class Tile extends Button {
         revealed = true;
         if (istMine) setText("M");
         else setText(String.valueOf(nachbarn));
+    }
+
+    public void Markiere(){
+        istMarkiert = !istMarkiert;
+        if(istMarkiert){
+            //TODO: Fahnenen graphic
+        /*
+        ImageView image = new ImageView(getClass().getResource("resources/com/example/minesweeper/Fahne.png").toExternalForm());
+        setGraphic(image);
+        */
+            setText("F");
+        }else {
+            setText("");
+        }
     }
 }

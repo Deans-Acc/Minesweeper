@@ -2,7 +2,9 @@ package com.example.minesweeper;
 
 import com.example.minesweeper.util.Array;
 import com.example.minesweeper.util.Random;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 
 import java.util.Arrays;
 
@@ -37,7 +39,11 @@ public class Game extends GridPane {
                 int finalY = y;
 
                 field[x][y].setOnMouseClicked(event -> {
-                    reveal(finalX, finalY);
+                    if(event.getButton() == MouseButton.PRIMARY){
+                        reveal(finalX, finalY);
+                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                        field[finalX][finalY].Markiere();
+                    }
                 });
                 add(field[x][y], x, y);
             }
