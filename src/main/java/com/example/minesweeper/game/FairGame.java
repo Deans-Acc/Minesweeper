@@ -3,6 +3,7 @@ package com.example.minesweeper.game;
 
 import com.example.minesweeper.util.Array;
 import com.microsoft.z3.*;
+import io.vavr.control.Option;
 
 public class FairGame extends AbstractGame {
     Context ctx = new Context();
@@ -41,9 +42,19 @@ public class FairGame extends AbstractGame {
         }
         s.add(ctx.mkPBEq(coeffs, vars, mine_amount));
 
-        if (s.check(ctx.mkEq(vars[1], ctx.mkBool(true))) == Status.SATISFIABLE) {
-
+        if (s.check(ctx.mkEq(vars[1], ctx.mkBool(false))) == Status.UNSATISFIABLE) {
+            field[x][y].istMine = Option.of(true);
+            return;
         }
-        System.out.println(s.check());
+        if (s.check(ctx.mkEq(vars[1], ctx.mkBool(true))) == Status.UNSATISFIABLE) {
+            field[x][y].istMine = Option.of(false);
+            //field[x][y].nachbarn = Option.of(0);
+            assert s.check(ctx.mkEq(vars[1], ctx.mkBool(false))) == Status.SATISFIABLE;
+
+            s.getModel().eval(vars[0], false).getBoolValue(); // for all neighbors
+            
+            return;
+        }
+        // TODO: Check if safe field exists
     }
 }
