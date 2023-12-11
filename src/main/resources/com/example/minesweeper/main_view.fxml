@@ -10,5 +10,7 @@
             <Label layoutX="165.0" layoutY="81.0" text="Game" />
          </children>
       </AnchorPane>
+      <GridPane fx:id="gamePane" alignment="CENTER">
+      </GridPane>
    </children>
 </VBox>
