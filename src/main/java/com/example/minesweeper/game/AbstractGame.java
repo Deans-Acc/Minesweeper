@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.AudioClip;
 
 import java.io.IOException;
 
@@ -16,6 +17,7 @@ public abstract class AbstractGame {
     public final int height;
     public final int mine_amount;
     public GameController controller;
+    public boolean gameOver = false;
 
     /**
      * @throws IllegalArgumentException width <= 0 || height <= 0 || width * height <= mine_amount
@@ -46,9 +48,9 @@ public abstract class AbstractGame {
     abstract protected void preRevealTile(int x, int y);
 
 
-
     protected EventHandler<? super MouseEvent> tileOnClick(int x, int y) {
         return event -> {
+            if (gameOver) return;
             if (event.getButton() == MouseButton.PRIMARY && field[x][y].state == TileState.Unknown) {
                 reveal(x, y);
             } else if (event.getButton() == MouseButton.SECONDARY) {
@@ -75,6 +77,7 @@ public abstract class AbstractGame {
         if (field[x][y].state == TileState.Revealed) return;
         preRevealTile(x, y);
         field[x][y].reveal();
+        if (gameOver) return;
         if (field[x][y].istMine.get()) {
             gameOver();
             return;
@@ -87,6 +90,12 @@ public abstract class AbstractGame {
     }
 
     protected void gameOver() {
-        // TODO
+        gameOver = true;
+        new AudioClip(this.getClass().getResource("Explosion.wav").toExternalForm()).play();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                reveal(x, y);
+            }
+        }
     }
 }
