@@ -3,6 +3,7 @@ module com.example.minesweeper {
     requires javafx.fxml;
     requires org.jetbrains.annotations;
     requires io.vavr;
+    requires java.desktop;
 
 
     opens com.example.minesweeper to javafx.fxml;

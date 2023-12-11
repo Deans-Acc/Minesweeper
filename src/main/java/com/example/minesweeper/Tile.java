@@ -21,10 +21,16 @@ public class Tile extends ImageView {
     public void reveal() {
         revealed = true;
         if (istMine) {
-            setImage(new Image(getClass().getResource("Mine.png").toExternalForm()));
+            setImage(new Image(getClass().getResource("Fuck.png").toExternalForm()));
         }
         else {
             setImage(new Image(getClass().getResource(String.valueOf(nachbarn)+".png").toExternalForm()));
+        }
+    }
+
+    public void revealIfMine(){
+        if(istMine && !revealed){
+            setImage(new Image(getClass().getResource("Mine.png").toExternalForm()));
         }
     }
 

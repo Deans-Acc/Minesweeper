@@ -4,12 +4,24 @@ import com.example.minesweeper.util.Array;
 import com.example.minesweeper.util.Random;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
+
+import java.io.*;
+import java.lang.reflect.Field;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Game extends GridPane {
     Tile[][] field;
     int width;
     int height;
+
+    boolean GameOver = false;
 
     /**
      * @throws IllegalArgumentException width <= 0 || height <= 0 || width * height <= mine_amount
@@ -41,9 +53,9 @@ public class Game extends GridPane {
                 int finalY = y;
 
                 field[x][y].setOnMouseClicked(event -> {
-                    if(event.getButton() == MouseButton.PRIMARY && !field[finalX][finalY].istMarkiert){
+                    if(event.getButton() == MouseButton.PRIMARY && !field[finalX][finalY].istMarkiert && !GameOver){
                         reveal(finalX, finalY);
-                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                    } else if (event.getButton() == MouseButton.SECONDARY && !GameOver) {
                         field[finalX][finalY].Markiere();
                     }
                 });
@@ -81,7 +93,32 @@ public class Game extends GridPane {
     }
 
     private void gameOver() {
-        // TODO
+        // TODO End the game
+        GameOver = true;
+        try (InputStream inputStream = getClass().getResourceAsStream("Explosion.wav")) {
+            playWav(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        RevealAllMines();
+    }
 
+    private void RevealAllMines(){
+        for (int x = 0; x < width; x++){
+            for(int y = 0; y < height; y++){
+                field[x][y].revealIfMine();
+            }
+        }
+    }
+
+    private void playWav(InputStream inputStream) {
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream)) {
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 }
