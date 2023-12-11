@@ -4,8 +4,6 @@ import com.example.minesweeper.util.Array;
 import com.example.minesweeper.util.Random;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
-
 import java.util.Arrays;
 
 public class Game extends GridPane {
@@ -26,6 +24,10 @@ public class Game extends GridPane {
         this.height = height;
         place_mines(mine_amount);
         calculate_tiles();
+        /*
+        setScaleX(2); //TODO: Settings
+        setScaleY(2); //TODO: Settings
+         */
     }
 
     private void place_mines(int mine_amount) throws IllegalArgumentException {
@@ -39,7 +41,7 @@ public class Game extends GridPane {
                 int finalY = y;
 
                 field[x][y].setOnMouseClicked(event -> {
-                    if(event.getButton() == MouseButton.PRIMARY){
+                    if(event.getButton() == MouseButton.PRIMARY && !field[finalX][finalY].istMarkiert){
                         reveal(finalX, finalY);
                     } else if (event.getButton() == MouseButton.SECONDARY) {
                         field[finalX][finalY].Markiere();
@@ -64,6 +66,7 @@ public class Game extends GridPane {
     }
 
     private void reveal(int x, int y) {
+        if(field[x][y].istMarkiert){field[x][y].Markiere();}
         if (field[x][y].revealed) return;
         field[x][y].reveal();
         if (field[x][y].istMine) {
@@ -79,5 +82,6 @@ public class Game extends GridPane {
 
     private void gameOver() {
         // TODO
+
     }
 }

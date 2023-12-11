@@ -1,35 +1,41 @@
 package com.example.minesweeper;
 
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
-public class Tile extends Button {
+public class Tile extends ImageView {
     public boolean istMine;
-    public  boolean istMarkiert;
+    public boolean istMarkiert;
     public int nachbarn;
     public boolean revealed = false;
+
+    Image image = new Image(getClass().getResource("None.png").toExternalForm());
 
     Tile(boolean istMine) {
         super();
         this.istMine = istMine;
+        setImage(image);
     }
 
     public void reveal() {
         revealed = true;
-        if (istMine) setText("M");
-        else setText(String.valueOf(nachbarn));
+        if (istMine) {
+            setImage(new Image(getClass().getResource("Mine.png").toExternalForm()));
+        }
+        else {
+            setImage(new Image(getClass().getResource(String.valueOf(nachbarn)+".png").toExternalForm()));
+        }
     }
 
     public void Markiere(){
+        if(revealed) return;
         istMarkiert = !istMarkiert;
         if(istMarkiert){
-            //TODO: Fahnenen graphic
-        /*
-        ImageView image = new ImageView(getClass().getResource("resources/com/example/minesweeper/Fahne.png").toExternalForm());
-        setGraphic(image);
-        */
-            setText("F");
+            setImage(new Image(getClass().getResource("Flagg.png").toExternalForm()));
         }else {
-            setText("");
+            setImage(image);
         }
     }
 }
+
