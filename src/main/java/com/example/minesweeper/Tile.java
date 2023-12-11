@@ -1,41 +1,40 @@
 package com.example.minesweeper;
 
-import javafx.scene.control.Button;
+import io.vavr.control.Option;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Tile extends ImageView {
-    public boolean istMine;
-    public boolean istMarkiert;
-    public int nachbarn;
-    public boolean revealed = false;
+    public Option<Boolean> istMine = Option.none();
+    public Option<Integer> nachbarn;
 
-    Image image = new Image(getClass().getResource("None.png").toExternalForm());
+    public TileState state = TileState.Unknown;
 
-    Tile(boolean istMine) {
+    private final Image blank = new Image(getClass().getResource("None.png").toExternalForm());
+
+    public Tile() {
         super();
-        this.istMine = istMine;
-        setImage(image);
+        setImage(blank);
     }
 
     public void reveal() {
-        revealed = true;
-        if (istMine) {
-            setImage(new Image(getClass().getResource("Mine.png").toExternalForm()));
-        }
-        else {
-            setImage(new Image(getClass().getResource(String.valueOf(nachbarn)+".png").toExternalForm()));
-        }
+        state = TileState.Revealed;
+        if (istMine.get()) setImage(new Image(getClass().getResource("Mine.png").toExternalForm()));
+        else setImage(new Image(getClass().getResource(nachbarn.get()+".png").toExternalForm()));
     }
 
-    public void Markiere(){
-        if(revealed) return;
-        istMarkiert = !istMarkiert;
-        if(istMarkiert){
-            setImage(new Image(getClass().getResource("Flagg.png").toExternalForm()));
-        }else {
-            setImage(image);
+    public void mark() {
+        switch (state) {
+            case Unknown -> {
+                state = TileState.Marked;
+                setImage(new Image(getClass().getResource("Flagg.png").toExternalForm()));
+            }
+            case Marked -> {
+                state = TileState.Unknown;
+                setImage(blank);
+            }
+            case Revealed -> {
+            }
         }
     }
 }
-
