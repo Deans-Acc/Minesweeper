@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 
 public class Tile extends ImageView {
     public Option<Boolean> istMine = Option.none();
-    public Option<Integer> nachbarn;
+    public Option<Integer> nachbarn = Option.none();
 
     public TileState state = TileState.Unknown;
 

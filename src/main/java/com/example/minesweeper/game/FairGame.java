@@ -1,60 +1,110 @@
 package com.example.minesweeper.game;
 
 
+import com.example.minesweeper.TileState;
 import com.example.minesweeper.util.Array;
 import com.microsoft.z3.*;
+import com.microsoft.z3.enumerations.Z3_lbool;
 import io.vavr.control.Option;
+
+import java.util.Arrays;
 
 public class FairGame extends AbstractGame {
     Context ctx = new Context();
 
-    FairGame(int width, int height, int mine_amount) throws IllegalArgumentException {
+    public FairGame(int width, int height, int mine_amount) throws IllegalArgumentException {
         super(width, height, mine_amount);
     }
 
-    @Override
-    protected void preRevealTile(int x, int y) {
-        if (field[x][y].istMine.isDefined()) return;
-        // TODO
-        Solver s = ctx.mkSolver();
-
-        Expr<BoolSort>[] vars = new Expr[x * y];
-
-        int[] coeffs = new int[x * y];
-        for (int nx = 0; nx < width; nx++) {
-            for (int ny = 0; ny < height; ny++) {
-                int n = nx * height + ny;
-                vars[n] = ctx.mkConst(String.valueOf(n), ctx.mkBoolSort());
-                var tile = field[nx][ny];
+    private void mkBase(Solver s, Expr<BoolSort>[] vars) {
+        for (int i = 0; i < width * height; i++) {
+            vars[i] = ctx.mkConst(String.valueOf(i), ctx.mkBoolSort());
+        }
+        int[] coeffs = new int[width * height];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int n = x * height + y;
+                var tile = field[x][y];
                 if (tile.istMine.isDefined()) {
                     s.add(ctx.mkEq(vars[n], ctx.mkBool(tile.istMine.get())));
                 }
                 if (tile.nachbarn.isDefined()) {
-                    int[] c = new int[8];
-                    for (int i = 0; i < 8; i++) {
+                    var m = Array.neighbours(x, y, width - 1, height - 1);
+                    Expr<BoolSort>[] neighbours = new Expr[m.size()];
+                    for (int i = 0; i < m.size(); i++) {
+                        var a = m.get(i);
+                        neighbours[i] = vars[a._1 * height + a._2];
+                    }
+                    int[] c = new int[neighbours.length];
+                    for (int i = 0; i < neighbours.length; i++) {
                         c[i] = 1;
                     }
-                    Expr<BoolSort>[] neighbours = Array.neighbours(nx, ny, width - 1, height - 1).stream().map(a -> vars[a._1 * height + a._2]).toArray(Expr[]::new);
                     s.add(ctx.mkPBEq(c, neighbours, tile.nachbarn.get()));
                 }
                 coeffs[n] = 1;
             }
         }
         s.add(ctx.mkPBEq(coeffs, vars, mine_amount));
+    }
 
-        if (s.check(ctx.mkEq(vars[1], ctx.mkBool(false))) == Status.UNSATISFIABLE) {
-            field[x][y].istMine = Option.of(true);
+    private boolean safeExists(Solver s, Expr<BoolSort>[] vars) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int pos = x * height + y;
+                if (field[x][y].state == TileState.Revealed) continue;
+                if (s.check(ctx.mkEq(vars[pos], ctx.mkBool(true))) == Status.UNSATISFIABLE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected void setMine(int x, int y) {
+        field[x][y].istMine = Option.of(true);
+    }
+
+    protected void setSafe(Solver s, Expr<BoolSort>[] vars, int x, int y) {
+        int pos = x * height + y;
+        field[x][y].istMine = Option.of(false);
+        if (s.check(ctx.mkEq(vars[pos], ctx.mkBool(false))) != Status.SATISFIABLE) {
+            throw new RuntimeException();
+        }
+
+        int n = (int) Array.neighbours(x, y, width - 1, height - 1).stream().
+                map(tile -> s.getModel().eval(vars[tile._1 * height + tile._2], false).getBoolValue()).
+                filter(val -> val == Z3_lbool.Z3_L_TRUE).
+                count();
+        field[x][y].nachbarn = Option.of(n);
+    }
+
+    @Override
+    protected void preRevealTile(int x, int y) {
+        if (field[x][y].istMine.isDefined()) return;
+
+        // on first click set around 1/4 of mines randomly
+
+        Solver s = ctx.mkSimpleSolver();
+        Expr<BoolSort>[] vars = new Expr[width * height];
+
+        mkBase(s, vars);
+
+        int pos = x * height + y;
+
+        if (s.check(ctx.mkEq(vars[pos], ctx.mkBool(false))) == Status.UNSATISFIABLE) {
+            // Must be a mine
+            setMine(x, y);
             return;
         }
-        if (s.check(ctx.mkEq(vars[1], ctx.mkBool(true))) == Status.UNSATISFIABLE) {
-            field[x][y].istMine = Option.of(false);
-            //field[x][y].nachbarn = Option.of(0);
-            assert s.check(ctx.mkEq(vars[1], ctx.mkBool(false))) == Status.SATISFIABLE;
-
-            s.getModel().eval(vars[0], false).getBoolValue(); // for all neighbors
-            
+        if (s.check(ctx.mkEq(vars[pos], ctx.mkBool(true))) == Status.UNSATISFIABLE) {
+            // Can't be a mine
+            setSafe(s, vars, x, y);
             return;
         }
-        // TODO: Check if safe field exists
+        if (safeExists(s, vars)) {
+            setMine(x, y);
+            return;
+        }
+        setSafe(s, vars, x, y);
     }
 }
