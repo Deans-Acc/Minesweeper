@@ -1,5 +1,6 @@
 package com.example.minesweeper.game;
 
+import com.example.minesweeper.Minesweeper;
 import com.example.minesweeper.Tile;
 import com.example.minesweeper.TileState;
 import com.example.minesweeper.util.Array;
@@ -91,7 +92,7 @@ public abstract class AbstractGame {
 
     protected void gameOver() {
         gameOver = true;
-        new AudioClip(this.getClass().getResource("Explosion.wav").toExternalForm()).play();
+        Minesweeper.addTitle("Explosion");
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 reveal(x, y);
