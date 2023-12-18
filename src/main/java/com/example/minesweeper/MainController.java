@@ -1,6 +1,7 @@
 package com.example.minesweeper;
 
 import com.example.minesweeper.game.NormalGame;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,22 +39,25 @@ public class MainController {
     public void ButtenEinstellungen(ActionEvent event) {
     }
 
-    public static void OpenNewGame(NormalGame game){
-        try {
-            Stage stage = new Stage();
-            FXMLLoader fxmlLoader = new FXMLLoader(MainController.class.getResource("GameFrame.fxml"));
-            Parent main = fxmlLoader.load();
-            GameFrame gameFrameController = fxmlLoader.getController();
-            GridPane gamePane = gameFrameController.gamePane;
-            gamePane.getChildren().add(game.controller.pane);
-            Scene scene = new Scene(main, 600, 400);
-            stage.setScene(scene);
-            game.controller.Minecounter.setText("Mines: 20");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void OpenNewGame(NormalGame game) {
+        Platform.runLater(() -> {
+            try {
+                Stage stage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(MainController.class.getResource("GameFrame.fxml"));
+                Parent main = fxmlLoader.load();
+                GameFrame gameFrameController = fxmlLoader.getController();
+                GridPane gamePane = gameFrameController.gamePane;
+                gamePane.getChildren().add(game.controller.pane);
+                Scene scene = new Scene(main, 600, 400);
+                stage.setScene(scene);
+                game.controller.Minecounter.setText("Mines: 20");
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
+
 }

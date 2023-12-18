@@ -4,13 +4,15 @@ import io.vavr.control.Option;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Tile extends ImageView {
+import java.io.Serializable;
+
+public class Tile extends ImageView implements Serializable {
     public Option<Boolean> istMine = Option.none();
     public Option<Integer> nachbarn;
 
     public TileState state = TileState.Unknown;
 
-    private final Image blank = new Image(getClass().getResource("None.png").toExternalForm());
+    private transient final Image blank = new Image(getClass().getResource("None.png").toExternalForm());
 
     public Tile() {
         super();

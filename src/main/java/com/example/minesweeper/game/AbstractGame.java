@@ -11,8 +11,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.media.AudioClip;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public abstract class AbstractGame {
+public abstract class AbstractGame  {
     public Tile[][] field;
     public final int width;
     public final int height;

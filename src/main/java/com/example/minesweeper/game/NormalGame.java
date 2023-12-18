@@ -3,6 +3,7 @@ package com.example.minesweeper.game;
 import com.example.minesweeper.util.Random;
 import io.vavr.control.Option;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 public class NormalGame extends AbstractGame {
