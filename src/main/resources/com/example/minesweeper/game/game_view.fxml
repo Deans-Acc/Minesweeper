@@ -7,6 +7,6 @@
    <children>
       <GridPane fx:id="grid" layoutX="200.0" layoutY="95.0" prefWidth="200.0">
       </GridPane>
-      <Label layoutX="276.0" layoutY="36.0" text="Mines left:" />
+      <Label layoutX="276.0" layoutY="36.0" text="Mines left:" fx:id="Minecounter"/>
    </children>
 </AnchorPane>

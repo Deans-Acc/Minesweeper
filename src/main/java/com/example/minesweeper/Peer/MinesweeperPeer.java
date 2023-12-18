@@ -1,14 +1,21 @@
 package com.example.minesweeper.Peer;
+import com.example.minesweeper.Tile;
+
 import java.net.*;
 import java.io.*;
 
 public class MinesweeperPeer {
     private String Address;
     private int Port;
+    public Socket s = null;
 
     public MinesweeperPeer(String ip, int port){
         this.Address = ip;
         this.Port = port;
+
+        try {
+            s = new Socket(ip, port);
+        }catch (IOException e){}
     }
 
     public void StartPeer(){
@@ -26,6 +33,25 @@ public class MinesweeperPeer {
     private void SendMessage(ObjectOutputStream out, Object message) throws IOException{
         out.writeObject(message);
         out.flush();
+    }
+
+    public void sendBoard(Tile[][] field){
+        try{
+            ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+            outputStream.writeObject(field);
+            outputStream.flush();
+        }catch (IOException e){}
+    }
+
+    public Tile[][] reveiveBoard(){
+        try{
+            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+            Tile[][] a = (Tile[][]) inputStream.readObject();
+            return a;
+        }catch (IOException e){} catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     private Object receiveMessage(ObjectInputStream in) throws IOException {

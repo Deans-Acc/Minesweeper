@@ -3,14 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="main" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minesweeper.MainController">
+<VBox fx:id="main" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minesweeper.MainController" alignment="CENTER">
    <children>
-      <AnchorPane prefHeight="400.0" prefWidth="600.0">
-         <children>
-            <Label layoutX="165.0" layoutY="81.0" text="Game" />
-         </children>
-      </AnchorPane>
-      <GridPane fx:id="gamePane" alignment="CENTER">
-      </GridPane>
+      <Button text="Spielen" onAction="#ButtenSpielen"/>
+      <Button text="Online" onAction="#ButtenOnline"/>
+      <Button text="Einstellungen" onAction="#ButtenEinstellungen"/>
    </children>
 </VBox>

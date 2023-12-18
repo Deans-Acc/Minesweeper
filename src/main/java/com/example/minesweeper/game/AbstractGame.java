@@ -13,7 +13,7 @@ import javafx.scene.media.AudioClip;
 import java.io.IOException;
 
 public abstract class AbstractGame {
-    protected Tile[][] field;
+    public Tile[][] field;
     public final int width;
     public final int height;
     public final int mine_amount;
