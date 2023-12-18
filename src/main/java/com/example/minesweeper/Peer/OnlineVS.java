@@ -1,5 +1,6 @@
 package com.example.minesweeper.Peer;
 
+import com.example.minesweeper.GameMode;
 import com.example.minesweeper.game.AbstractGame;
 import com.example.minesweeper.game.NormalGame;
 
@@ -12,7 +13,7 @@ public class OnlineVS {
 
     public OnlineVS(String otherplayeradress, int port, boolean ishost){
         this.host = ishost;
-        this.otherPlayer = new MinesweeperPeer(otherplayeradress, port);
+        this.otherPlayer = new MinesweeperPeer(otherplayeradress, port, GameMode.vs);
     }
 
     public void hostAGame(){
@@ -22,7 +23,7 @@ public class OnlineVS {
 
     public void ConnectAsGuest(String otherPlayerIP, int port){
         this.host = false;
-        this.otherPlayer = new MinesweeperPeer(otherPlayerIP, port);
+        this.otherPlayer = new MinesweeperPeer(otherPlayerIP, port, GameMode.vs);
 
     }
 

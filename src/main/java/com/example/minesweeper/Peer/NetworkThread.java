@@ -1,17 +1,21 @@
 package com.example.minesweeper.Peer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
+import com.example.minesweeper.GameMode;
+import com.example.minesweeper.MainController;
+import com.example.minesweeper.Tile;
+import com.example.minesweeper.game.NormalGame;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class NetworkThread extends Thread{
     private ServerSocket serverSocket;
+    public GameMode mode;
 
-    public NetworkThread(int port) throws IOException {
+    public NetworkThread(int port, GameMode m) throws IOException {
         this.serverSocket = new ServerSocket(port);
+        this.mode = m;
     }
 
     @Override
@@ -19,7 +23,22 @@ public class NetworkThread extends Thread{
         try {
             while (true) {
                 Socket socket = serverSocket.accept();
-                handleConnection(socket);
+                System.out.println("Conneced");
+
+                try{
+                    System.out.println("Start 1");
+                    ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+                    ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                    System.out.println("Done");
+
+                    NormalGame g = new NormalGame(10,10,20);
+                    System.out.println("Starte Senden");
+                    SendMessage(outputStream, g.field);
+                    System.out.println(" gesendet");
+                    MainController.OpenNewGame(g);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -27,12 +46,26 @@ public class NetworkThread extends Thread{
     }
 
     public void handleConnection(Socket s){
-        try(
-                InputStream inputStream = s.getInputStream();
-                OutputStream outputStream = s.getOutputStream();
-                ){
+        try{
+            s.getOutputStream().flush();
+            System.out.println("Start 1");
+            ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+            System.out.println("Start 2");
+            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+            System.out.println("Done");
 
-        }catch (IOException e){}
+            NormalGame g = new NormalGame(10,10,20);
+            System.out.println("Starte Senden");
+            SendMessage(outputStream, g.field);
+            System.out.println(" gesendet");
+            MainController.OpenNewGame(g);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    private void SendMessage(ObjectOutputStream out, Object message) throws IOException{
+        out.writeObject(message);
+        out.flush();
     }
 }
 

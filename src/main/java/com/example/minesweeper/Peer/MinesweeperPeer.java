@@ -1,5 +1,8 @@
 package com.example.minesweeper.Peer;
+import com.example.minesweeper.GameMode;
+import com.example.minesweeper.MainController;
 import com.example.minesweeper.Tile;
+import com.example.minesweeper.game.NormalGame;
 
 import java.net.*;
 import java.io.*;
@@ -8,14 +11,25 @@ public class MinesweeperPeer {
     private String Address;
     private int Port;
     public Socket s = null;
+    public GameMode mode;
 
-    public MinesweeperPeer(String ip, int port){
+    public MinesweeperPeer(String ip, int port, GameMode m){
         this.Address = ip;
         this.Port = port;
-
+        this.mode = m;
         try {
             s = new Socket(ip, port);
-        }catch (IOException e){}
+            System.out.println("here:" + s.isConnected());
+            if(mode == GameMode.vs){
+                NormalGame g = new NormalGame(10,10,20);
+                System.out.println("Bevor");
+                g.field = reveiveBoard();
+                System.out.println("after");
+                MainController.OpenNewGame(g);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void StartPeer(){

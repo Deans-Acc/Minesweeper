@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="main" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minesweeper.Online_Controller" alignment="CENTER">
+    <children>
+        <HBox>
+            <Label text="Host:" fx:id="HostLabel"/>
+            <Label  fx:id="status"/>
+        </HBox>
+        <TextField fx:id="iptextfield"/>
+        <HBox>
+            <Button  text="Host vs Game" onAction="#HostAVS"/>
+            <Button  text="Join vs Game" onAction="#JoinAVS"/>
+        </HBox>
+    </children>
+</VBox>
