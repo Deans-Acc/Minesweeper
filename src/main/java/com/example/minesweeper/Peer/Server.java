@@ -1,7 +1,8 @@
 package com.example.minesweeper.Peer;
 
-import com.example.minesweeper.GameMode;
 import com.example.minesweeper.MainController;
+import com.example.minesweeper.Minesweeper;
+import com.example.minesweeper.Tile;
 import com.example.minesweeper.game.NormalGame;
 
 import java.io.*;
@@ -30,7 +31,6 @@ public class Server extends Thread{
             try {
                 if(guest == null){
                     guest = socket.accept();
-                    System.out.println("Guest1: "+guest.isConnected());
                     switch (mode){
                         case vs -> handleForVS(guest);
                     }
@@ -41,25 +41,38 @@ public class Server extends Thread{
         }
     }
 
+    public  void handleForCoop(Socket s){
+        //TODO: Coop
+        try{
+            NormalGame game = Minesweeper.manager.GetNormalGame();
+            sendObjectToClient(s,game.field);
+            MainController.OpenNewGame(game);
+            Minesweeper.manager.game.field = (Tile[][])receivObjecteFromClient(s);
+        }catch (IOException e){}catch (ClassNotFoundException e){}
+    }
+
     public void handleForVS(Socket s){
        try{
            NormalGame g = new NormalGame(10,10,20);
            sendObjectToClient(s,g.field);
            MainController.OpenNewGame(g);
+           synchronized(s){
+                s.wait();
+           }
            receivObjecteFromClient(s);
        }catch (IOException e){ e.printStackTrace();} catch (ClassNotFoundException e) {
+           throw new RuntimeException(e);
+       } catch (InterruptedException e) {
            throw new RuntimeException(e);
        }
     }
     private static void sendToClient(Socket clientSocket, String message) throws IOException {
         OutputStream outputStream = clientSocket.getOutputStream();
         outputStream.write(message.getBytes());
-        outputStream.flush();
     }
     private static void sendObjectToClient(Socket clientSocket, Object data) throws IOException {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream())) {
             objectOutputStream.writeObject(data);
-            objectOutputStream.flush();
         }
     }
     private static void receiveFromClient(Socket clientSocket) throws IOException {

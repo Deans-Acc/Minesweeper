@@ -17,5 +17,13 @@
             <Button  text="Host vs Game" onAction="#HostAVS"/>
             <Button  text="Join vs Game" onAction="#JoinAVS"/>
         </HBox>
+        <HBox>
+            <Button  text="Host Coop Game" onAction="#HostACoop"/>
+            <Button  text="Join Coop Game" onAction="#JoinACoop"/>
+        </HBox>
+        <HBox>
+            <Button  text="Host Helden Game" onAction="#HostAHelden"/>
+            <Button  text="Join Helden Game" onAction="#JoinAHelden"/>
+        </HBox>
     </children>
 </VBox>

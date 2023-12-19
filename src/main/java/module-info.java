@@ -11,4 +11,6 @@ module com.example.minesweeper {
     exports com.example.minesweeper;
     exports com.example.minesweeper.game;
     opens com.example.minesweeper.game to javafx.fxml;
+    exports com.example.minesweeper.Peer;
+    opens com.example.minesweeper.Peer to javafx.fxml;
 }

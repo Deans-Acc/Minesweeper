@@ -21,7 +21,7 @@ public class MainController {
     public VBox main;
 
     public void ButtenSpielen(ActionEvent event) {
-        NormalGame game = new NormalGame(10,10,20);
+        NormalGame game = Minesweeper.manager.GetNormalGame();
         OpenNewGame(game);
     }
 
@@ -37,6 +37,14 @@ public class MainController {
     }
 
     public void ButtenEinstellungen(ActionEvent event) {
+        try{
+            Stage s = new Stage();
+            FXMLLoader fxml = new FXMLLoader(getClass().getResource("Einstellungs_View.fxml"));
+            Parent main = fxml.load();
+            Scene scene = new Scene(main);
+            s.setScene(scene);
+            s.show();
+        }catch (IOException e){}
     }
 
     public static void OpenNewGame(NormalGame game) {
@@ -50,7 +58,7 @@ public class MainController {
                 gamePane.getChildren().add(game.controller.pane);
                 Scene scene = new Scene(main, 600, 400);
                 stage.setScene(scene);
-                game.controller.Minecounter.setText("Mines: 20");
+                game.controller.Minecounter.setText("Mines: "+ game.mine_amount);
                 stage.show();
             } catch (IOException e) {
                 e.printStackTrace();

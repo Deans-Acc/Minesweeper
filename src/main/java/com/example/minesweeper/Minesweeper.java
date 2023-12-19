@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Minesweeper extends Application {
-    private final NormalGame game = new NormalGame(10, 10, 20);
+    public static GameManager manager = new GameManager();
     private static final Radio radio = new Radio();
 
     @Override

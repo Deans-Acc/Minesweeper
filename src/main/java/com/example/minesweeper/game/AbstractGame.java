@@ -89,6 +89,7 @@ public abstract class AbstractGame  {
                 reveal(xy._1, xy._2);
             }
         }
+        TestForWin();
     }
 
     protected void gameOver() {
@@ -98,6 +99,21 @@ public abstract class AbstractGame  {
             for (int y = 0; y < height; y++) {
                 reveal(x, y);
             }
+        }
+    }
+
+    protected void TestForWin(){
+        int ammount = 0;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if(field[x][y].state == TileState.Unknown){
+                    ammount++;
+                }
+            }
+        }
+        if(ammount == mine_amount){
+            System.out.println("Gewonnen");
+            //TODO: Visualisieren das Spiel Beendet ist
         }
     }
 }

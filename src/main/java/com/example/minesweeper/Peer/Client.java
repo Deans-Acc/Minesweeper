@@ -1,6 +1,5 @@
 package com.example.minesweeper.Peer;
 
-import com.example.minesweeper.GameMode;
 import com.example.minesweeper.MainController;
 import com.example.minesweeper.Tile;
 import com.example.minesweeper.game.NormalGame;
@@ -39,17 +38,14 @@ public class Client extends Thread{
             g.field = (Tile[][]) receiveObjectFromServer(socket);
             MainController.OpenNewGame(g);
             gestarted = true;
+            synchronized(socket){
+                socket.wait();
+            }
             receiveObjectFromServer(socket);
         }catch (ClassNotFoundException e){e.printStackTrace();} catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            try {
-                if (socket != null && !socket.isClosed()) {
-                    socket.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -61,7 +57,6 @@ public class Client extends Thread{
     private static void sendToServer(Socket socket, Object data) throws IOException {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
             objectOutputStream.writeObject(data);
-            objectOutputStream.flush();
         }
     }
     private static void receiveFromServer(Socket socket) throws IOException {

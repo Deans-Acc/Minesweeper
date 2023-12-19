@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minesweeper.EinstellungController" alignment="CENTER">
+    <children>
+        <HBox>
+            <Label text="Breite"/>
+            <TextField fx:id="Breite"/>
+        </HBox>
+        <HBox>
+            <Label text="Höhe"/>
+            <TextField fx:id="Hoehe"/>
+        </HBox>
+        <HBox>
+            <Label text="Minen:"/>
+            <TextField fx:id="Minen"/>
+        </HBox>
+        <Button text="Übernehmen" onAction="#apply"/>
+    </children>
+</VBox>
